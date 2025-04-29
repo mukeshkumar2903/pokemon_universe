@@ -1,72 +1,118 @@
-let results = document.querySelector("#result");
-let button = document.querySelector("#loadMoreBtn");
-let input = document.querySelector("input");
-let select = document.querySelector("#select")
-const API = "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20";
+let results = document.querySelector("#result")
+let button = document.querySelector(".btn")
 
-let alldata=[];
-
-async function fetchdata() {
-    const response = await fetch(API);
-    const result = await response.json();
-    getdata(result.results);
-    // console.log(result.results);
-}
-fetchdata();
-
-async function getdata(data) {
-    //console.log(arr);
-    for (let x of data) {
-        //let newDiv = document.createElement("div");
-        let fetch_1 = await fetch(x.url);
-        let fetch_2 = await fetch_1.json();
-        //console.log(fetch_2);
-        getfetch(fetch_2);
-        console.log(fetch_2);
-    }
-}
-
-async function getfetch(data) {
-    let div_1 = document.createElement("div");
-    div_1.innerHTML = `
-    <div class="flip-box">
-    <div class="flip-box-inner">
-    <div class="flip-box-front">
-      <img src="${data.sprites.other.dream_world.front_default}" alt="Avatar">
-      <p>Name: ${data.name}</p>
-      <p>Type: ${data.types[0].type.name}</p>
-
-    </div>
-    <div class="flip-box-back">
-      <p>height: ${data.height}</p>
-      <p>weight: ${data.weight}</p>
-      <p>hp: ${data.stats[0].base_stat}</p>
-      <p>attack: ${data.stats[1].base_stat}</p>
-      <p>defence: ${data.stats[2].base_stat}</p>
-      <p>special_attack: ${data.stats[3].base_stat}</p>
-      <p>special_defence: ${data.stats[4].base_stat}</p>
-      <p>speed: ${data.stats[5].base_stat}</p>
-    </div>
-    </div>
-    </div>`
-    let newDiv=document.createElement("option");
-    newDiv.innerHTML=data.types[0].type.name;
-    select.append(newDiv);
-    results.append(div_1);
-    alldata.puch(div_1);
-    //results.append(div_1);
-}
-
-inputfunction(input);
-function inputfunction(e){
-    console.log(e.target.value);
-    
-}
+let select = document.querySelector("select")
+let input = document.querySelector("input")
 
 
 
+let offsetvalue = 20;
+let limitvalue = 0;
 
+let pokimondata = [];
+let selectarr = [];
 
 button.addEventListener("click", () => {
-    fetchdata();
+    fetchpokimon()
 });
+
+
+async function fetchpokimon() {
+    let response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limitvalue}&offset=${offsetvalue}`);
+        //console.log(response)
+        let result = await response.json();
+    // console.log(result.results)
+    getdata(result.results);
+    offsetvalue = offsetvalue + 20;
+}
+
+
+async function fetchTypes() {
+    let types = await fetch(" https://pokeapi.co/api/v2/type/?limit=21");
+    let typesresponse = await types.json();
+    // console.log(typesresponse.results)
+    pokimontypes(typesresponse.results);
+}
+fetchTypes();
+
+function pokimontypes(arr) {
+    arr.forEach((object) => {
+        let option = document.createElement("option");
+        option.value = object.name;
+        option.innerText = object.name;
+        select.append(option);
+    })
+}
+
+fetchpokimon();
+
+
+async function getdata(arr) {
+    //  console.log(arr)
+    for (let x of arr) {
+        let fetcheing = await fetch(x.url);
+        let resutlfetch = await fetcheing.json();
+        pokimondata.push(resutlfetch);
+        // pokimondata.push(resutlfetch)
+        // console.log(pokimondata)
+
+    }
+    // console.log(pokimondata)
+    getfecthing(pokimondata);
+}
+// console.log(pokimondata)
+
+
+
+function getfecthing(obj) {
+    results.innerHTML = " "
+    obj.forEach((element) => {
+        // console.log(element)
+        let divmain = document.createElement("div");
+        divmain.classList.add("flip-card");
+        divmain.innerHTML = `
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                <img src="${element.sprites.other.dream_world.front_default}" alt="Avatar" >
+                <p class="name">Name:   ${element.name}</p>
+                <p class="type">type:  ${element.types[0].type.name}  </p>
+                </div>
+                <div class="flip-card-back">
+                <p>height: ${element.height}</p>
+                <p>Weight: ${element.weight}</p>
+                <p>hp : ${element.stats[0].base_stat}</p>
+                <p>attack: ${element.stats[1].base_stat}</p>
+                <p>defence: ${element.stats[2].base_stat}</p>
+                <p>special_attack: ${element.stats[3].base_stat}</p>
+                <p>special_defence: ${element.stats[4].base_stat}</p>
+                <p>speed: ${element.stats[5].base_stat}</p>
+                </div>
+            </div>`;
+        results.append(divmain)
+    })
+
+    // console.log(arr.types[0].type.name);
+}
+input.addEventListener("input", (e) => {
+    let searchvariable = e.target.value
+    let value = pokimondata.filter((obj) => {
+        return obj.name.includes(searchvariable)
+    })
+    //  console.log(value)
+    getfecthing(value)
+})
+
+select.addEventListener("change", (e) => {
+    selectarr = []
+    let searching = e.target.value
+    pokimondata.forEach((element, index) => {
+        element.types.forEach((obj) => {
+            if (obj.type.name === searching) {
+                // console.log("milgya")
+                selectarr.push(element)
+            }
+        })
+        console.log(selectarr)
+    })
+    getfecthing(selectarr)
+})
