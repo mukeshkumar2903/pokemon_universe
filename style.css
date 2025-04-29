@@ -10,7 +10,6 @@ body {
 }
 h1{
     font-size: 3rem;
-    text-shadow: 1px 1px 3px #000000;
     margin-top: 2rem;
 }
 #result {
@@ -23,7 +22,7 @@ h1{
 
 .flip-card {
   background-color: transparent;
-  width: 250px;
+  width: 22%;
   height: 300px;
   perspective: 1000px;
 }
@@ -61,8 +60,8 @@ h1{
 }
 
 .flip-card-front img {
-  width: 100px;
-  height: 100px;
+  width: 250px;
+  height: 220px;
   object-fit: contain;
 }
 
@@ -92,10 +91,11 @@ select, input{
   background-color: #E78B48;
   font-weight: bold;
   border: none;
-  position: absolute;
-  bottom: -56px;
-    right: 21px;
-  padding: 0.7rem;
+  z-index: 1;
+  position: fixed;
+  bottom: 30px;
+  right: 15px;
+  padding: 10px;
   font-size: 1rem;
   border-radius: 8px;
 }

@@ -13,14 +13,14 @@ let pokimondata = [];
 let selectarr = [];
 
 button.addEventListener("click", () => {
-    fetchpokimon()
+    fetchpokimon();
 });
 
 
 async function fetchpokimon() {
     let response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limitvalue}&offset=${offsetvalue}`);
-        //console.log(response)
-        let result = await response.json();
+    //console.log(response)
+    let result = await response.json();
     // console.log(result.results)
     getdata(result.results);
     offsetvalue = offsetvalue + 20;
@@ -65,7 +65,7 @@ async function getdata(arr) {
 
 
 function getfecthing(obj) {
-    results.innerHTML = " "
+    results.innerHTML = " ";
     obj.forEach((element) => {
         // console.log(element)
         let divmain = document.createElement("div");
@@ -75,7 +75,8 @@ function getfecthing(obj) {
                 <div class="flip-card-front">
                 <img src="${element.sprites.other.dream_world.front_default}" alt="Avatar" >
                 <p class="name">Name:   ${element.name}</p>
-                <p class="type">type:  ${element.types[0].type.name}  </p>
+                <p class="type">type: ${element.types[0].type.name}${element.types[1] ? ', ' + element.types[1].type.name : ''}</p>
+
                 </div>
                 <div class="flip-card-back">
                 <p>height: ${element.height}</p>
@@ -88,7 +89,7 @@ function getfecthing(obj) {
                 <p>speed: ${element.stats[5].base_stat}</p>
                 </div>
             </div>`;
-        results.append(divmain)
+        results.append(divmain);
     })
 
     // console.log(arr.types[0].type.name);
@@ -105,14 +106,29 @@ input.addEventListener("input", (e) => {
 select.addEventListener("change", (e) => {
     selectarr = []
     let searching = e.target.value
-    pokimondata.forEach((element, index) => {
-        element.types.forEach((obj) => {
-            if (obj.type.name === searching) {
-                // console.log("milgya")
-                selectarr.push(element)
-            }
+
+    let filter = document.querySelector("#filter");
+
+    if (searching === filter.value) {
+
+        getfecthing(pokimondata);
+        // pokimondata.push(pokimondata)
+        // console.log(pokimondata);
+
+    }
+    else {
+        pokimondata.forEach((element, index) => {
+            element.types.forEach((obj) => {
+                if (obj.type.name === searching) {
+                    // console.log("milgya")
+                    selectarr.push(element);
+                }
+            })
+            // console.log(selectarr)
         })
-        console.log(selectarr)
-    })
-    getfecthing(selectarr)
+        getfecthing(selectarr)
+    };
 })
+
+// (<p class="type">type:  ${element.types[0].type.name } , </p>
+//     <p class="type">${element.types[1]?.type.name || ''} </p>)
